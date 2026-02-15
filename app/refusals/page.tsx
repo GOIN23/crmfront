@@ -33,6 +33,19 @@ type ApiResponse = {
   data: Refusal[];
   meta: Meta;
 };
+interface GetRefusalsParams {
+  page: number;
+  perPage: number;
+  search?: string;
+  sortBy?: string;
+  sortOrder?: 'asc' | 'desc';
+  filterRegNumber?: string;
+  filterFullName?: string;
+  filterInn?: string;
+  filterRegion?: string;
+  dateFrom?: string;  // Добавлено
+  dateTo?: string;    // Добавлено
+}
 
 const formatParsingDate = (dateString: string | null) => {
   if (!dateString) return '—';
@@ -91,7 +104,7 @@ export default function RefusalsPage() {
     }
 
     try {
-      const params: any = {
+      const params: GetRefusalsParams = {
         page,
         perPage: 30,
         search: search.trim() || undefined,
@@ -106,6 +119,7 @@ export default function RefusalsPage() {
       if (dateFrom) params.dateFrom = dateFrom;
       if (dateTo) params.dateTo = dateTo;
 
+      //TODO: сделать так, чтобы он через env подтягивался(на сервере 'http://194.5.79.68:3001/contracts/refusals)
       const res = await axios.get<ApiResponse>('http://localhost:3001/contracts/refusals', { params });
 
       setData(res.data.data || []);
