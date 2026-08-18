@@ -6,6 +6,12 @@ export interface Attachment {
   fileName: string | null;
   url: string | null;
 }
+export interface Comment {
+  id: string | number;
+  text: string;
+  createdAt: string;
+  author?: string; // если есть автор
+}
 
 export interface Refusal {
   regNumber: string;
