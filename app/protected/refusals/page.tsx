@@ -11,13 +11,16 @@ import {
   File,
   MessageSquare,
   Clock,
+  ChevronDown,
 } from 'lucide-react';
 
+const STATUS_OPTIONS = ['Новый', 'Недозвон', 'Переговоры', 'Отказ'] as const;
+
 const STATUS_COLORS: Record<string, string> = {
-  Новый: 'bg-blue-100 text-blue-800',
-  Недозвон: 'bg-yellow-100 text-yellow-800',
-  Переговоры: 'bg-purple-100 text-purple-800',
-  Отказ: 'bg-red-100 text-red-800',
+  Новый: 'bg-blue-50 text-blue-700 border-blue-200',
+  Недозвон: 'bg-yellow-50 text-yellow-800 border-yellow-200',
+  Переговоры: 'bg-purple-50 text-purple-700 border-purple-200',
+  Отказ: 'bg-red-50 text-red-700 border-red-200',
 };
 
 const INTERVAL_OPTIONS = [
@@ -33,6 +36,7 @@ export default observer(function RefusalsPage() {
   // Комментарии
   const [openComments, setOpenComments] = useState<Record<string, boolean>>({});
   const [newCommentTexts, setNewCommentTexts] = useState<Record<string, string>>({});
+  const [openStatusFor, setOpenStatusFor] = useState<string | null>(null);
 
   // Автообновление
   const [autoRefresh, setAutoRefresh] = useState(false);
@@ -41,6 +45,21 @@ export default observer(function RefusalsPage() {
 
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
   const countdownRef = useRef<NodeJS.Timeout | null>(null);
+
+  useEffect(() => {
+    const closeStatusMenu = () => setOpenStatusFor(null);
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') setOpenStatusFor(null);
+    };
+
+    document.addEventListener('click', closeStatusMenu);
+    document.addEventListener('keydown', handleKeyDown);
+
+    return () => {
+      document.removeEventListener('click', closeStatusMenu);
+      document.removeEventListener('keydown', handleKeyDown);
+    };
+  }, []);
 
   useEffect(() => {
     store.fetch();
@@ -101,6 +120,11 @@ export default observer(function RefusalsPage() {
       ...prev,
       [regNumber]: '',
     }));
+  };
+
+  const handleStatusChange = async (regNumber: string, status: string) => {
+    setOpenStatusFor(null);
+    await store.changeStatus(regNumber, status);
   };
 
   const formatTimer = (sec: number | null) => {
@@ -236,31 +260,31 @@ export default observer(function RefusalsPage() {
           <div className="p-12 text-center text-gray-500">Нет записей</div>
         ) : (
           <div className="overflow-x-auto">
-            <table className="min-w-full divide-y divide-gray-200">
+            <table className="min-w-[1530px] w-full table-fixed divide-y divide-gray-200">
               <thead className="bg-gray-100">
                 <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                  <th className="w-[190px] px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
                     Реестр.№
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                  <th className="w-[250px] px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
                     Компания / ФИО
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                  <th className="w-[140px] px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
                     ИНН
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                  <th className="w-[170px] px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
                     Регион
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                  <th className="w-[170px] px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
                     Парсинг
                   </th>
-                  <th className="px-5 py-3 text-left text-xs font-medium text-gray-500 uppercase w-[5%]">
+                  <th className="w-[390px] px-5 py-3 text-left text-xs font-medium text-gray-500 uppercase">
                     Документы
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase w-[20%]">
+                  <th className="w-[150px] px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">
                     Статус
                   </th>
-                  <th className="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase w-12">
+                  <th className="w-[70px] px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase">
                     Комм.
                   </th>
                 </tr>
@@ -278,15 +302,15 @@ export default observer(function RefusalsPage() {
                           {item.regNumber} <ExternalLink size={14} />
                         </a>
                       </td>
-                      <td className="px-6 py-4">{item.fullName || '—'}</td>
+                      <td className="px-6 py-4 break-words">{item.fullName || '—'}</td>
                       <td className="px-6 py-4">{item.inn || '—'}</td>
-                      <td className="px-6 py-4">{item.region || '—'}</td>
+                      <td className="px-6 py-4 break-words">{item.region || '—'}</td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         {item.dataParsing
                           ? format(new Date(item.dataParsing), 'dd.MM.yyyy HH:mm', { locale: ru })
                           : '—'}
                       </td>
-                      <td className="px-6 py-4">
+                      <td className="px-5 py-4 align-top">
                         {item.attachments?.length > 0 ? (
                           <div className="space-y-1">
                             {item.attachments.map((att, i) => (
@@ -294,7 +318,7 @@ export default observer(function RefusalsPage() {
                                 key={i}
                                 href={att.url || '#'}
                                 target="_blank"
-                                className="text-blue-600 hover:underline text-sm block"
+                                className="block break-words text-sm text-blue-600 hover:underline"
                               >
                                 <File size={14} className="inline mr-1" />
                                 {att.fileName || `Док ${i + 1}`}
@@ -305,19 +329,56 @@ export default observer(function RefusalsPage() {
                           '—'
                         )}
                       </td>
-                      <td className="px-6 py-4">
-                        <select
-                          value={item.status || 'Новый'}
-                          onChange={(e) => store.changeStatus(item.regNumber, e.target.value)}
-                          className={`w-full px-3 py-1.5 rounded border text-sm ${
-                            STATUS_COLORS[item.status || 'Новый'] || 'bg-gray-100'
-                          }`}
+                      <td className="px-3 py-4 align-top">
+                        <div
+                          className="relative"
+                          onClick={(event) => event.stopPropagation()}
                         >
-                          <option>Новый</option>
-                          <option>Недозвон</option>
-                          <option>Переговоры</option>
-                          <option>Отказ</option>
-                        </select>
+                          <button
+                            type="button"
+                            onClick={() =>
+                              setOpenStatusFor((current) =>
+                                current === item.regNumber ? null : item.regNumber
+                              )
+                            }
+                            className={`flex h-9 w-full items-center justify-between gap-2 rounded-md border px-2.5 text-sm font-medium ${
+                              STATUS_COLORS[item.status || 'Новый'] ||
+                              'border-gray-200 bg-gray-50 text-gray-700'
+                            }`}
+                          >
+                            <span className="min-w-0 truncate">
+                              {item.status || 'Новый'}
+                            </span>
+                            <ChevronDown size={15} className="shrink-0" />
+                          </button>
+
+                          {openStatusFor === item.regNumber && (
+                            <div
+                              className={`absolute right-0 z-30 w-36 rounded-md border border-gray-200 bg-white py-1 shadow-lg ${
+                                openComments[item.regNumber]
+                                  ? 'bottom-full mb-2'
+                                  : 'top-full mt-2'
+                              }`}
+                            >
+                              {STATUS_OPTIONS.map((status) => (
+                                <button
+                                  key={status}
+                                  type="button"
+                                  onClick={() =>
+                                    handleStatusChange(item.regNumber, status)
+                                  }
+                                  className={`block w-full px-3 py-2 text-left text-sm hover:bg-gray-50 ${
+                                    (item.status || 'Новый') === status
+                                      ? 'font-semibold text-gray-950'
+                                      : 'text-gray-700'
+                                  }`}
+                                >
+                                  {status}
+                                </button>
+                              ))}
+                            </div>
+                          )}
+                        </div>
                       </td>
                       <td className="px-4 py-4 text-center">
                         <button
