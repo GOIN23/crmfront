@@ -10,7 +10,7 @@ export interface Comment {
   id: string | number;
   text: string;
   createdAt: string;
-  author?: string; // если есть автор
+  author?: string | null;
 }
 
 export interface Refusal {
@@ -94,23 +94,21 @@ export default class RefusalsStore {
     if (!text.trim()) return;
 
     try {
-      await api.post('/contracts/comment', { RegNumber: regNumber, text });
+      const res = await api.post('/contracts/comment', { RegNumber: regNumber, text });
+      const createdComment = res.data;
 
-      // Обновляем локально (оптимистично)
       runInAction(() => {
         const item = this.data.find(r => r.regNumber === regNumber);
         if (item) {
           item.comments = item.comments || [];
           item.comments.unshift({
-            id: Date.now(),           // временный id
-            text,
-            createdAt: new Date().toISOString(),
+            id: createdComment?.id ?? Date.now(),
+            text: createdComment?.text ?? text,
+            author: createdComment?.author ?? this.root.authStore.user?.login ?? null,
+            createdAt: createdComment?.createdAt ?? new Date().toISOString(),
           });
         }
       });
-
-      // Можно сделать refetch, если хочешь актуальные данные с сервера
-      // await this.fetch();
     } catch (err) {
       console.error("Ошибка добавления комментария:", err);
     }

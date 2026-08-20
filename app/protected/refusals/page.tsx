@@ -628,8 +628,11 @@ function CommentDrawer({
             <div className="grid gap-3">
               {item.comments.map((comment) => (
                 <div key={comment.id} className="rounded-lg border border-slate-200 bg-slate-50 p-3">
-                  <div className="mb-1 text-xs text-slate-500">
-                    {formatDateTime(comment.createdAt)}
+                  <div className="mb-2 flex items-center justify-between gap-3 text-xs text-slate-500">
+                    <span className="min-w-0 truncate font-semibold text-slate-700">
+                      {comment.author || 'Автор не указан'}
+                    </span>
+                    <span className="shrink-0">{formatDateTime(comment.createdAt)}</span>
                   </div>
                   <div className="whitespace-pre-wrap text-sm leading-relaxed text-slate-900">
                     {comment.text}
