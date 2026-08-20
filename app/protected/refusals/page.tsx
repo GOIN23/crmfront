@@ -38,8 +38,8 @@ const COLUMN_DEFS: Array<{ key: ColumnKey; label: string; width: number }> = [
   { key: 'contacts', label: 'Контакты', width: 230 },
   { key: 'region', label: 'Регион', width: 190 },
   { key: 'dataParsing', label: 'Парсинг', width: 165 },
-  { key: 'attachments', label: 'Документы', width: 360 },
-  { key: 'status', label: 'Статус', width: 140 },
+  { key: 'attachments', label: 'Документы', width: 430 },
+  { key: 'status', label: 'Статус', width: 150 },
   { key: 'comments', label: 'Комм.', width: 80 },
 ];
 
@@ -271,10 +271,12 @@ export default observer(function RefusalsPage() {
                 href={att.url || '#'}
                 target="_blank"
                 rel="noreferrer"
-                className="flex items-start gap-1.5 break-words text-sm leading-snug text-blue-600 hover:text-blue-700"
+                className="flex max-w-full min-w-0 items-start gap-1.5 text-sm leading-snug text-blue-600 hover:text-blue-700"
               >
                 <File size={14} className="mt-0.5 shrink-0" />
-                <span>{att.fileName || `Док ${index + 1}`}</span>
+                <span className="min-w-0 break-words [overflow-wrap:anywhere]">
+                  {att.fileName || `Док ${index + 1}`}
+                </span>
               </a>
             ))}
           </div>
