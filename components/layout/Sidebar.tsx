@@ -3,7 +3,7 @@ import { FileText } from 'lucide-react';
 
 const items = [
   { label: 'Главное', href: '/protected', icon: FileText },
-  { label: 'Расторжения 44-ФЗ', href: '/protected/refusals', icon: FileText },
+  { label: 'ЕИС реестр 44-ФЗ', href: '/protected/refusals', icon: FileText },
 
 ];
 
