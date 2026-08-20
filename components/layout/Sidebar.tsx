@@ -9,7 +9,7 @@ const items = [
 
 export default function Sidebar() {
   return (
-    <aside className="w-64 bg-gray-900 text-white flex flex-col">
+    <aside className="w-64 shrink-0 bg-gray-900 text-white flex flex-col">
       <div className="p-6 text-2xl font-bold border-b border-gray-800">
         CRM
       </div>

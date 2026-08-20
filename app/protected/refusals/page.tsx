@@ -135,7 +135,7 @@ export default observer(function RefusalsPage() {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="min-w-0 max-w-full space-y-6">
       {/* Фильтры — полностью как на скриншоте */}
       <div className="bg-white border rounded-lg shadow">
         {/* Верхняя строка с датами и кнопками */}
@@ -252,13 +252,13 @@ export default observer(function RefusalsPage() {
       </div>
 
       {/* Таблица */}
-      <div className="bg-white rounded-lg shadow border overflow-hidden">
+      <div className="max-w-full overflow-hidden rounded-lg border bg-white shadow">
         {store.loading ? (
           <div className="p-12 text-center text-gray-500">Загрузка...</div>
         ) : store.data.length === 0 ? (
           <div className="p-12 text-center text-gray-500">Нет записей</div>
         ) : (
-          <div className="overflow-x-auto">
+          <div className="max-w-full overflow-x-auto">
             <table className="min-w-[1750px] w-full table-fixed divide-y divide-gray-200">
               <thead className="bg-gray-100">
                 <tr>

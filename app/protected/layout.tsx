@@ -30,10 +30,10 @@ export default observer(function ProtectedLayout({
   }
 
   return (
-    <div className="flex min-h-screen">
+    <div className="flex min-h-screen overflow-x-hidden">
       <Sidebar />
-      <div className="flex-1 flex flex-col">
-        <header className="bg-white border-b px-6 py-3 flex justify-between items-center">
+      <div className="flex-1 flex min-w-0 flex-col">
+        <header className="bg-white border-b px-6 py-3 flex shrink-0 justify-between items-center">
           <h1 className="text-xl font-semibold"></h1>
           <button
             onClick={() => rootStore.authStore.logout()}
@@ -42,7 +42,7 @@ export default observer(function ProtectedLayout({
             Выйти
           </button>
         </header>
-        <main className="flex-1 p-6 bg-gray-50">{children}</main>
+        <main className="flex-1 min-w-0 overflow-x-hidden p-6 bg-gray-50">{children}</main>
       </div>
     </div>
   );
