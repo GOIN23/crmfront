@@ -291,11 +291,11 @@ export default observer(function RefusalsPage() {
                   </th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-gray-200">
+              <tbody className="divide-y divide-gray-200 text-sm text-gray-900">
                 {store.data.map((item) => (
                   <>
                     <tr key={item.regNumber} className="hover:bg-gray-50">
-                      <td className="px-6 py-4 whitespace-nowrap text-sm">
+                      <td className="px-6 py-5 align-top whitespace-nowrap">
                         <a
                           href={`https://zakupki.gov.ru/epz/contract/contractCard/common-info.html?reestrNumber=${item.regNumber}`}
                           target="_blank"
@@ -304,9 +304,11 @@ export default observer(function RefusalsPage() {
                           {item.regNumber} <ExternalLink size={14} />
                         </a>
                       </td>
-                      <td className="px-6 py-4 break-words">{item.fullName || '—'}</td>
-                      <td className="px-6 py-4">{item.inn || '—'}</td>
-                      <td className="px-5 py-4 align-top">
+                      <td className="px-6 py-5 align-top break-words leading-relaxed">
+                        {item.fullName || '—'}
+                      </td>
+                      <td className="px-6 py-5 align-top whitespace-nowrap">{item.inn || '—'}</td>
+                      <td className="px-5 py-5 align-top">
                         {item.supplierPhone || item.supplierEmail ? (
                           <div className="space-y-1 text-sm">
                             {item.supplierPhone ? (
@@ -333,13 +335,15 @@ export default observer(function RefusalsPage() {
                           <span className="text-gray-400">—</span>
                         )}
                       </td>
-                      <td className="px-6 py-4 break-words">{item.region || '—'}</td>
-                      <td className="px-6 py-4 whitespace-nowrap">
+                      <td className="px-6 py-5 align-top break-words leading-relaxed">
+                        {item.region || '—'}
+                      </td>
+                      <td className="px-6 py-5 align-top whitespace-nowrap">
                         {item.dataParsing
                           ? format(new Date(item.dataParsing), 'dd.MM.yyyy HH:mm', { locale: ru })
                           : '—'}
                       </td>
-                      <td className="px-5 py-4 align-top">
+                      <td className="px-5 py-5 align-top">
                         {item.attachments?.length > 0 ? (
                           <div className="space-y-1">
                             {item.attachments.map((att, i) => (
@@ -358,7 +362,7 @@ export default observer(function RefusalsPage() {
                           '—'
                         )}
                       </td>
-                      <td className="px-3 py-4 align-top">
+                      <td className="px-3 py-5 align-top">
                         <div
                           className="space-y-2"
                           onClick={(event) => event.stopPropagation()}
@@ -409,7 +413,7 @@ export default observer(function RefusalsPage() {
                           )}
                         </div>
                       </td>
-                      <td className="px-4 py-4 text-center">
+                      <td className="px-4 py-5 align-top text-center">
                         <button
                           onClick={() => toggleComments(item.regNumber)}
                           className="text-gray-600 hover:text-gray-900 relative"
