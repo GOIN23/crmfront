@@ -47,16 +47,13 @@ export default observer(function RefusalsPage() {
   const countdownRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
-    const closeStatusMenu = () => setOpenStatusFor(null);
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === 'Escape') setOpenStatusFor(null);
     };
 
-    document.addEventListener('click', closeStatusMenu);
     document.addEventListener('keydown', handleKeyDown);
 
     return () => {
-      document.removeEventListener('click', closeStatusMenu);
       document.removeEventListener('keydown', handleKeyDown);
     };
   }, []);
@@ -331,20 +328,24 @@ export default observer(function RefusalsPage() {
                       </td>
                       <td className="px-3 py-4 align-top">
                         <div
-                          className="relative"
+                          className="space-y-2"
                           onClick={(event) => event.stopPropagation()}
                         >
                           <button
                             type="button"
-                            onClick={() =>
+                            aria-expanded={openStatusFor === item.regNumber}
+                            aria-haspopup="menu"
+                            onClick={(event) => {
+                              event.preventDefault();
+                              event.stopPropagation();
                               setOpenStatusFor((current) =>
                                 current === item.regNumber ? null : item.regNumber
-                              )
-                            }
-                            className={`flex h-9 w-full items-center justify-between gap-2 rounded-md border px-2.5 text-sm font-medium ${
+                              );
+                            }}
+                            className={`flex h-9 w-full items-center justify-between gap-2 rounded-md border px-2.5 text-sm font-medium transition-shadow ${
                               STATUS_COLORS[item.status || 'Новый'] ||
                               'border-gray-200 bg-gray-50 text-gray-700'
-                            }`}
+                            } ${openStatusFor === item.regNumber ? 'ring-2 ring-orange-200' : ''}`}
                           >
                             <span className="min-w-0 truncate">
                               {item.status || 'Новый'}
@@ -353,24 +354,20 @@ export default observer(function RefusalsPage() {
                           </button>
 
                           {openStatusFor === item.regNumber && (
-                            <div
-                              className={`absolute right-0 z-30 w-36 rounded-md border border-gray-200 bg-white py-1 shadow-lg ${
-                                openComments[item.regNumber]
-                                  ? 'bottom-full mb-2'
-                                  : 'top-full mt-2'
-                              }`}
-                            >
+                            <div className="grid gap-1 rounded-md border border-gray-200 bg-white p-1 shadow-sm">
                               {STATUS_OPTIONS.map((status) => (
                                 <button
                                   key={status}
                                   type="button"
-                                  onClick={() =>
-                                    handleStatusChange(item.regNumber, status)
-                                  }
-                                  className={`block w-full px-3 py-2 text-left text-sm hover:bg-gray-50 ${
+                                  onClick={(event) => {
+                                    event.preventDefault();
+                                    event.stopPropagation();
+                                    handleStatusChange(item.regNumber, status);
+                                  }}
+                                  className={`rounded px-2.5 py-1.5 text-left text-sm transition-colors ${
                                     (item.status || 'Новый') === status
-                                      ? 'font-semibold text-gray-950'
-                                      : 'text-gray-700'
+                                      ? 'bg-gray-900 font-semibold text-white'
+                                      : 'text-gray-700 hover:bg-gray-50'
                                   }`}
                                 >
                                   {status}
