@@ -18,6 +18,8 @@ export interface Refusal {
   region: string;
   inn: string | null;
   fullName: string | null;
+  supplierPhone: string | null;
+  supplierEmail: string | null;
   signDate: string | null;
   publishDate: string | null;
   dataParsing: string | null;

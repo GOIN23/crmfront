@@ -12,6 +12,8 @@ import {
   MessageSquare,
   Clock,
   ChevronDown,
+  Phone,
+  Mail,
 } from 'lucide-react';
 
 const STATUS_OPTIONS = ['Новый', 'Недозвон', 'Переговоры', 'Отказ'] as const;
@@ -257,7 +259,7 @@ export default observer(function RefusalsPage() {
           <div className="p-12 text-center text-gray-500">Нет записей</div>
         ) : (
           <div className="overflow-x-auto">
-            <table className="min-w-[1530px] w-full table-fixed divide-y divide-gray-200">
+            <table className="min-w-[1750px] w-full table-fixed divide-y divide-gray-200">
               <thead className="bg-gray-100">
                 <tr>
                   <th className="w-[190px] px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
@@ -268,6 +270,9 @@ export default observer(function RefusalsPage() {
                   </th>
                   <th className="w-[140px] px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
                     ИНН
+                  </th>
+                  <th className="w-[220px] px-5 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                    Контакты
                   </th>
                   <th className="w-[170px] px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
                     Регион
@@ -301,6 +306,33 @@ export default observer(function RefusalsPage() {
                       </td>
                       <td className="px-6 py-4 break-words">{item.fullName || '—'}</td>
                       <td className="px-6 py-4">{item.inn || '—'}</td>
+                      <td className="px-5 py-4 align-top">
+                        {item.supplierPhone || item.supplierEmail ? (
+                          <div className="space-y-1 text-sm">
+                            {item.supplierPhone ? (
+                              <a
+                                href={`tel:${item.supplierPhone.replace(/[^\d+]/g, '')}`}
+                                className="flex items-start gap-1.5 break-all text-gray-900 hover:text-blue-700"
+                              >
+                                <Phone size={14} className="mt-0.5 shrink-0 text-gray-400" />
+                                <span>{item.supplierPhone}</span>
+                              </a>
+                            ) : null}
+
+                            {item.supplierEmail ? (
+                              <a
+                                href={`mailto:${item.supplierEmail}`}
+                                className="flex items-start gap-1.5 break-all text-blue-600 hover:underline"
+                              >
+                                <Mail size={14} className="mt-0.5 shrink-0 text-gray-400" />
+                                <span>{item.supplierEmail}</span>
+                              </a>
+                            ) : null}
+                          </div>
+                        ) : (
+                          <span className="text-gray-400">—</span>
+                        )}
+                      </td>
                       <td className="px-6 py-4 break-words">{item.region || '—'}</td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         {item.dataParsing
@@ -395,7 +427,7 @@ export default observer(function RefusalsPage() {
 
                     {openComments[item.regNumber] && (
                       <tr>
-                        <td colSpan={8} className="p-0 bg-gray-50">
+                        <td colSpan={9} className="p-0 bg-gray-50">
                           <div className="p-4">
                             {item.comments && item.comments.length > 0 ? (
                               <div className="space-y-3 mb-4">
