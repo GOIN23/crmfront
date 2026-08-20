@@ -1,9 +1,9 @@
 'use client';
 
 import { useEffect } from 'react';
+import { usePathname } from 'next/navigation';
 import { useRouter } from 'next/navigation';
 import { observer } from 'mobx-react-lite';
-import { rootStore } from '@/store/rootStore';
 import Sidebar from '@/components/layout/Sidebar';
 import { useStores } from '@/store/RootStoreProvider';
 
@@ -12,37 +12,37 @@ export default observer(function ProtectedLayout({
 }: {
   children: React.ReactNode;
 }) {
-  debugger;
-  const { authStore } = useStores(); // ← получаем store через хук
+  const { authStore } = useStores();
   const router = useRouter();
+  const pathname = usePathname();
+  const title = pathname === '/protected/refusals' ? 'ЕИС реестр 44-ФЗ' : 'Главное';
 
   useEffect(() => {
-    console.log('🔍 Проверка авторизации:', authStore.isAuthenticated);
     if (!authStore.isAuthenticated) {
-      console.log('➡️ Редирект на /login');
       router.replace('/login');
     }
-  }, [authStore.isAuthenticated, router]); // ← правильные зависимости
+  }, [authStore.isAuthenticated, router]);
 
-  // Пока проверяем авторизацию - ничего не показываем
   if (!authStore.isAuthenticated) {
     return null;
   }
 
   return (
-    <div className="flex min-h-screen overflow-x-hidden">
+    <div className="flex min-h-screen overflow-x-hidden bg-slate-100 text-slate-950">
       <Sidebar />
       <div className="flex-1 flex min-w-0 flex-col">
-        <header className="bg-white border-b px-6 py-3 flex shrink-0 justify-between items-center">
-          <h1 className="text-xl font-semibold"></h1>
+        <header className="flex h-[58px] shrink-0 items-center justify-between border-b border-slate-200 bg-white px-6 md:px-7">
+          <h1 className="text-lg font-semibold tracking-normal text-slate-950">{title}</h1>
           <button
-            onClick={() => rootStore.authStore.logout()}
-            className="text-red-600 hover:underline"
+            onClick={() => authStore.logout()}
+            className="text-sm font-medium text-red-600 hover:text-red-700"
           >
             Выйти
           </button>
         </header>
-        <main className="flex-1 min-w-0 overflow-x-hidden p-6 bg-gray-50">{children}</main>
+        <main className="flex-1 min-w-0 overflow-x-hidden bg-slate-100 p-4 md:p-7">
+          {children}
+        </main>
       </div>
     </div>
   );
