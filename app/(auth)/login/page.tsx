@@ -12,13 +12,12 @@ export default observer(function LoginPage() {
   const [password, setPassword] = useState('');
 
   useEffect(() => {
-    if (authStore.isAuthenticated) {
+    if (authStore.sessionChecked && authStore.isAuthenticated) {
       router.replace('/protected');
     }
-  }, [authStore.isAuthenticated, router]);
+  }, [authStore.isAuthenticated, authStore.sessionChecked, router]);
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-    debugger;
     event.preventDefault();
     const success = await authStore.login(login.trim(), password);
     if (success) {

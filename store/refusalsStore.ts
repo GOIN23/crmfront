@@ -48,7 +48,6 @@ export default class RefusalsStore {
   }
 
   async fetch() {
-    debugger;
     if (!this.root.authStore.isAuthenticated) return;
 
     this.loading = true;

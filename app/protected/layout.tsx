@@ -18,10 +18,14 @@ export default observer(function ProtectedLayout({
   const title = pathname === '/protected/refusals' ? 'ЕИС реестр 44-ФЗ' : 'Главное';
 
   useEffect(() => {
-    if (!authStore.isAuthenticated) {
+    if (authStore.sessionChecked && !authStore.isAuthenticated) {
       router.replace('/login');
     }
-  }, [authStore.isAuthenticated, router]);
+  }, [authStore.isAuthenticated, authStore.sessionChecked, router]);
+
+  if (!authStore.sessionChecked) {
+    return <AuthLoadingScreen />;
+  }
 
   if (!authStore.isAuthenticated) {
     return null;
@@ -47,3 +51,11 @@ export default observer(function ProtectedLayout({
     </div>
   );
 });
+
+function AuthLoadingScreen() {
+  return (
+    <div className="grid min-h-screen place-items-center bg-slate-100 text-sm font-medium text-slate-500">
+      Загрузка...
+    </div>
+  );
+}

@@ -5,7 +5,6 @@ import { observer } from 'mobx-react-lite';
 import { useStores } from '@/store/RootStoreProvider';
 
 const ProtectedPage = observer(() => {
-  debugger
   const { authStore } = useStores();
 
   return (

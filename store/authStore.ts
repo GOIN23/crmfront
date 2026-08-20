@@ -10,20 +10,34 @@ export default class AuthStore {
   isAuthenticated = false;
   user: User | null = null;
   loading = false;
+  sessionChecked = false;
   error: string | null = null;
 
   constructor(root: RootStore) {
     this.root = root;
+    if (typeof window === 'undefined') {
+      this.sessionChecked = true;
+    }
     makeAutoObservable(this);
-    this.tryRestoreSession();
+    if (typeof window !== 'undefined') {
+      void this.tryRestoreSession();
+    }
   }
 
   async tryRestoreSession() {
-    debugger;
+    if (typeof window === 'undefined') {
+      this.sessionChecked = true;
+      return;
+    }
+
+    this.sessionChecked = false;
     const savedToken = localStorage.getItem('access_token');
     if (!savedToken) {
-      this.isAuthenticated = false;
-      this.user = null;
+      runInAction(() => {
+        this.isAuthenticated = false;
+        this.user = null;
+        this.sessionChecked = true;
+      });
       return;
     }
     try {
@@ -38,15 +52,17 @@ export default class AuthStore {
         this.user = null;
         localStorage.removeItem('access_token');
       });
+    } finally {
+      runInAction(() => {
+        this.sessionChecked = true;
+      });
     }
   }
 
   async login(login: string, password: string) {
-    console.log('🔐 Попытка входа:', login);
     this.loading = true;
     this.error = null;
     try {
-      debugger;
       const res = await api.post('/auth/login', { loginOrEmail: login, password });
       const { accessToken } = res.data;
       localStorage.setItem('access_token', accessToken);
@@ -70,6 +86,7 @@ export default class AuthStore {
     runInAction(() => {
       this.isAuthenticated = false;
       this.user = null;
+      this.sessionChecked = true;
     });
   }
 }
